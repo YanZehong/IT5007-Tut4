@@ -176,6 +176,82 @@ var BlackIssueAdd = /*#__PURE__*/function (_React$Component3) {
   return BlackIssueAdd;
 }(React.Component);
 
+var DisplaySeat = /*#__PURE__*/function (_React$Component4) {
+  _inherits(DisplaySeat, _React$Component4);
+
+  var _super4 = _createSuper(DisplaySeat);
+
+  function DisplaySeat() {
+    _classCallCheck(this, DisplaySeat);
+
+    return _super4.apply(this, arguments);
+  }
+
+  _createClass(DisplaySeat, [{
+    key: "render",
+    value: function render() {
+      var seatDict = this.props.seatDict;
+      var seats = [];
+
+      for (var rr = 0; rr < 5; rr++) {
+        var temps = {
+          rowid: rr,
+          cols: [],
+          colors: []
+        };
+
+        for (var cc = 1; cc < 6; cc++) {
+          var checkNum = rr * 5 + cc;
+          temps.cols.push(checkNum);
+
+          if (seatDict[checkNum] == "Available") {
+            temps.colors.push("lightgrey");
+          } else {
+            temps.colors.push("lightcoral");
+          }
+        }
+
+        seats.push(temps);
+      }
+
+      return /*#__PURE__*/React.createElement("table", {
+        id: "sTable"
+      }, /*#__PURE__*/React.createElement("thead", null), /*#__PURE__*/React.createElement("tbody", null, seats.map(function (seat) {
+        return /*#__PURE__*/React.createElement("tr", {
+          key: seat.rowid
+        }, /*#__PURE__*/React.createElement("td", {
+          style: {
+            textAlign: "center",
+            background: seat.colors[0]
+          }
+        }, seat.cols[0]), /*#__PURE__*/React.createElement("td", {
+          style: {
+            textAlign: "center",
+            background: seat.colors[1]
+          }
+        }, seat.cols[1]), /*#__PURE__*/React.createElement("td", {
+          style: {
+            textAlign: "center",
+            background: seat.colors[2]
+          }
+        }, seat.cols[2]), /*#__PURE__*/React.createElement("td", {
+          style: {
+            textAlign: "center",
+            background: seat.colors[3]
+          }
+        }, seat.cols[3]), /*#__PURE__*/React.createElement("td", {
+          style: {
+            textAlign: "center",
+            background: seat.colors[4]
+          }
+        }, seat.cols[4]));
+      })));
+    }
+  }]);
+
+  return DisplaySeat;
+}(React.Component);
+
 function graphQLFetch(_x) {
   return _graphQLFetch.apply(this, arguments);
 }
@@ -244,27 +320,30 @@ function _graphQLFetch() {
   return _graphQLFetch.apply(this, arguments);
 }
 
-var HomePage = /*#__PURE__*/function (_React$Component4) {
-  _inherits(HomePage, _React$Component4);
+var HomePage = /*#__PURE__*/function (_React$Component5) {
+  _inherits(HomePage, _React$Component5);
 
-  var _super4 = _createSuper(HomePage);
+  var _super5 = _createSuper(HomePage);
 
   function HomePage() {
     var _this3;
 
     _classCallCheck(this, HomePage);
 
-    _this3 = _super4.call(this);
+    _this3 = _super5.call(this);
     _this3.state = {
       issues: [],
       blackissues: [],
       showIssueFilter: false,
       showIssueTable: false,
       showIssueAdd: true,
-      showBlackIssueAdd: true
+      showBlackIssueAdd: true,
+      showSeats: false,
+      seatDict: {}
     };
     _this3.createIssue = _this3.createIssue.bind(_assertThisInitialized(_this3));
     _this3.msgDisplay = _this3.msgDisplay.bind(_assertThisInitialized(_this3));
+    _this3.msgBlackList = _this3.msgBlackList.bind(_assertThisInitialized(_this3));
     _this3.createBlackIssue = _this3.createBlackIssue.bind(_assertThisInitialized(_this3));
     return _this3;
   }
@@ -273,6 +352,7 @@ var HomePage = /*#__PURE__*/function (_React$Component4) {
     key: "componentDidMount",
     value: function componentDidMount() {
       this.loadData();
+      this.initDict();
     }
   }, {
     key: "loadData",
@@ -311,31 +391,62 @@ var HomePage = /*#__PURE__*/function (_React$Component4) {
       return loadData;
     }()
   }, {
+    key: "initDict",
+    value: function initDict() {
+      var initialDict = {};
+
+      for (var k = 1; k < 26; k++) {
+        initialDict[k] = "Available";
+      }
+
+      this.setState({
+        seatDict: initialDict
+      });
+    }
+  }, {
     key: "createIssue",
     value: function () {
       var _createIssue = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee2(issue) {
-        var query, data;
+        var updateSeatDict, seatNum, query, data;
         return regeneratorRuntime.wrap(function _callee2$(_context2) {
           while (1) {
             switch (_context2.prev = _context2.next) {
               case 0:
-                query = "mutation issueAdd($issue: IssueInputs!) {\n      issueAdd(issue: $issue) {\n        id\n      }\n    }";
-                _context2.next = 3;
+                updateSeatDict = this.state.seatDict;
+                seatNum = Number(issue.seatid);
+
+                if (!(updateSeatDict[seatNum] == "Available")) {
+                  _context2.next = 10;
+                  break;
+                }
+
+                query = "mutation issueAdd($issue: IssueInputs!) {\n        issueAdd(issue: $issue) {\n          id\n        }\n      }";
+                _context2.next = 6;
                 return graphQLFetch(query, {
                   issue: issue
                 });
 
-              case 3:
+              case 6:
                 data = _context2.sent;
 
                 if (data) {
                   this.loadData();
+                  updateSeatDict[seatNum] = "Occupied";
+                  this.setState({
+                    seatDict: updateSeatDict
+                  });
                   this.msgDisplay("Successful!");
                 } else {
                   this.msgDisplay("Failed~");
                 }
 
-              case 5:
+                _context2.next = 11;
+                break;
+
+              case 10:
+                this.msgDisplay("Occupied Seat~");
+
+              case 11:
               case "end":
                 return _context2.stop();
             }
@@ -367,12 +478,17 @@ var HomePage = /*#__PURE__*/function (_React$Component4) {
               case 3:
                 data = _context3.sent;
 
-              case 4:
+                if (data) {
+                  this.loadData();
+                  this.msgBlackList("Successfully add to blacklist");
+                }
+
+              case 5:
               case "end":
                 return _context3.stop();
             }
           }
-        }, _callee3);
+        }, _callee3, this);
       }));
 
       function createBlackIssue(_x3) {
@@ -385,6 +501,12 @@ var HomePage = /*#__PURE__*/function (_React$Component4) {
     key: "msgDisplay",
     value: function msgDisplay(msg) {
       var msgDisp = document.getElementById("msgDisplay");
+      msgDisp.textContent = msg;
+    }
+  }, {
+    key: "msgBlackList",
+    value: function msgBlackList(msg) {
+      var msgDisp = document.getElementById("msgBlackList");
       msgDisp.textContent = msg;
     }
   }, {
@@ -420,16 +542,37 @@ var HomePage = /*#__PURE__*/function (_React$Component4) {
             showIssueTable: !_this4.state.showIssueTable
           });
         }
-      }, "Display Reservation")), this.state.showIssueFilter ? /*#__PURE__*/React.createElement(IssueFilter, null) : null, /*#__PURE__*/React.createElement("hr", null), this.state.showIssueAdd ? /*#__PURE__*/React.createElement(IssueAdd, {
+      }, "Display Reservation"), ' | ', /*#__PURE__*/React.createElement("a", {
+        href: "#",
+        onClick: function onClick() {
+          _this4.setState({
+            showSeats: !_this4.state.showSeats
+          });
+        }
+      }, "Display Seats")), this.state.showIssueFilter ? /*#__PURE__*/React.createElement(IssueFilter, null) : null, /*#__PURE__*/React.createElement("hr", null), this.state.showIssueAdd ? /*#__PURE__*/React.createElement(IssueAdd, {
         createIssue: this.createIssue,
         msgDisplay: this.msgDisplay
       }) : null, this.state.showIssueAdd ? /*#__PURE__*/React.createElement("p", {
         id: "msgDisplay"
       }) : null, /*#__PURE__*/React.createElement("hr", null), this.state.showBlackIssueAdd ? /*#__PURE__*/React.createElement(BlackIssueAdd, {
         createBlackIssue: this.createBlackIssue
+      }) : null, this.state.showBlackIssueAdd ? /*#__PURE__*/React.createElement("p", {
+        id: "msgBlackList"
       }) : null, /*#__PURE__*/React.createElement("hr", null), this.state.showIssueTable ? /*#__PURE__*/React.createElement(DisplayTraveller, {
         issues: this.state.issues
-      }) : null, /*#__PURE__*/React.createElement("hr", null));
+      }) : null, /*#__PURE__*/React.createElement("hr", null), this.state.showSeats ? /*#__PURE__*/React.createElement(DisplaySeat, {
+        seatDict: this.state.seatDict
+      }) : null, this.state.showSeats ? /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("table", {
+        id: "Ltable"
+      }, /*#__PURE__*/React.createElement("tbody", null, /*#__PURE__*/React.createElement("tr", null, /*#__PURE__*/React.createElement("td", {
+        style: {
+          background: "lightgrey"
+        }
+      }, "Available"), /*#__PURE__*/React.createElement("td", {
+        style: {
+          background: "lightcoral"
+        }
+      }, "Occupied"))))) : null);
     }
   }]);
 

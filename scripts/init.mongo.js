@@ -11,14 +11,14 @@
 
 db.issues.remove({});
 
-const issuesDB = [
-  {
-    id: 1, name: 'Ravan', phone: '80395111', seatid: 1,
-    created: new Date('2019-01-15'), 
-  },
-];
+// const issuesDB = [
+//   {
+//     id: 1, name: 'Ravan', phone: '80395111', seatid: 1,
+//     created: new Date('2019-01-15'), 
+//   },
+// ];
 
-db.issues.insertMany(issuesDB);
+// db.issues.insertMany(issuesDB);
 const count = db.issues.count();
 print('Inserted', count, 'issues');
 

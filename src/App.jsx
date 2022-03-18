@@ -109,6 +109,43 @@ class BlackIssueAdd extends React.Component {
   }
 }
 
+class DisplaySeat extends React.Component {
+  render() {
+    const seatDict = this.props.seatDict;
+    var seats = [];
+    for (let rr=0; rr<5; rr++) {
+      var temps = {rowid: rr, cols:[], colors: []};
+      for (let cc=1; cc<6; cc++) {
+        let checkNum = (rr*5)+cc;
+        temps.cols.push(checkNum);
+        if (seatDict[checkNum] == "Available") {
+          temps.colors.push("lightgrey");
+        }
+        else {
+          temps.colors.push("lightcoral");
+        }
+      }
+      seats.push(temps);
+    }
+    return (
+      <table id="sTable">
+        <thead></thead>
+        <tbody>
+          {seats.map((seat)=>(
+            <tr key={seat.rowid}>
+              <td style={{textAlign: "center", background: seat.colors[0]}}>{seat.cols[0]}</td>
+              <td style={{textAlign: "center", background: seat.colors[1]}}>{seat.cols[1]}</td>
+              <td style={{textAlign: "center", background: seat.colors[2]}}>{seat.cols[2]}</td>
+              <td style={{textAlign: "center", background: seat.colors[3]}}>{seat.cols[3]}</td>
+              <td style={{textAlign: "center", background: seat.colors[4]}}>{seat.cols[4]}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    );
+  }
+}
+
 async function graphQLFetch(query, variables = {}) {
   try {
     const response = await fetch('/graphql', {
@@ -137,14 +174,16 @@ async function graphQLFetch(query, variables = {}) {
 class HomePage extends React.Component {
   constructor() {
     super();
-    this.state = { issues: [], blackissues: [], showIssueFilter: false, showIssueTable: false, showIssueAdd: true, showBlackIssueAdd: true };
+    this.state = { issues: [], blackissues: [], showIssueFilter: false, showIssueTable: false, showIssueAdd: true, showBlackIssueAdd: true, showSeats: false, seatDict: {} };
     this.createIssue = this.createIssue.bind(this);
     this.msgDisplay = this.msgDisplay.bind(this);
+    this.msgBlackList = this.msgBlackList.bind(this);
     this.createBlackIssue = this.createBlackIssue.bind(this);
   }
 
   componentDidMount() {
     this.loadData();
+    this.initDict();
   }
 
   async loadData() {
@@ -159,22 +198,38 @@ class HomePage extends React.Component {
       this.setState({ issues: data.issueList });
     }
   }
-
+  
+  initDict() {
+    var initialDict = {};
+      for (let k=1; k<26; k++) {
+        initialDict[k] = "Available";
+      }
+      this.setState({seatDict: initialDict });
+  }
 
   async createIssue(issue) {
-    const query = `mutation issueAdd($issue: IssueInputs!) {
-      issueAdd(issue: $issue) {
-        id
-      }
-    }`;
+    const updateSeatDict = this.state.seatDict;
+    let seatNum = Number(issue.seatid);
+    if (updateSeatDict[seatNum]=="Available") {
+      const query = `mutation issueAdd($issue: IssueInputs!) {
+        issueAdd(issue: $issue) {
+          id
+        }
+      }`;
 
-    const data = await graphQLFetch(query, { issue });
-    if (data) {
-      this.loadData();
-      this.msgDisplay("Successful!");
+      const data = await graphQLFetch(query, { issue });
+      if (data) {
+        this.loadData();
+        updateSeatDict[seatNum] = "Occupied";
+        this.setState({ seatDict: updateSeatDict });
+        this.msgDisplay("Successful!");
+      }
+      else {
+        this.msgDisplay("Failed~");
+      }
     }
     else {
-      this.msgDisplay("Failed~");
+      this.msgDisplay("Occupied Seat~");
     }
   }
 
@@ -186,10 +241,19 @@ class HomePage extends React.Component {
     }`;
 
     const data = await graphQLFetch(query, { blackissue });
+    if (data) {
+      this.loadData();
+      this.msgBlackList("Successfully add to blacklist");
+    }
   }
 
   msgDisplay(msg) {
     const msgDisp = document.getElementById("msgDisplay");
+    msgDisp.textContent=msg;
+  }
+
+  msgBlackList(msg) {
+    const msgDisp = document.getElementById("msgBlackList");
     msgDisp.textContent=msg;
   }
 
@@ -205,6 +269,8 @@ class HomePage extends React.Component {
           <a href="#" onClick={()=>{this.setState({showBlackIssueAdd: !this.state.showBlackIssueAdd})}}>Add BlackList</a>
           {' | '}
           <a href="#" onClick={()=>{this.setState({showIssueTable: !this.state.showIssueTable})}}>Display Reservation</a>
+          {' | '}
+          <a href="#" onClick={()=>{this.setState({showSeats: !this.state.showSeats})}}>Display Seats</a>
         </nav>
         {this.state.showIssueFilter? (<IssueFilter />): null}
         <hr />
@@ -212,9 +278,23 @@ class HomePage extends React.Component {
         {this.state.showIssueAdd? (<p id="msgDisplay"></p>):null}
         <hr />
         {this.state.showBlackIssueAdd? (<BlackIssueAdd createBlackIssue={this.createBlackIssue} />):null}
+        {this.state.showBlackIssueAdd? (<p id="msgBlackList"></p>):null}
         <hr />
         {this.state.showIssueTable? (<DisplayTraveller issues={this.state.issues} />):null}
         <hr />
+        {this.state.showSeats? (<DisplaySeat seatDict={this.state.seatDict} />):null}
+        {this.state.showSeats? (
+          <div>
+            <table id="Ltable">
+              <tbody>
+                <tr>
+                  <td style={{background: "lightgrey"}}>Available</td>
+                  <td style={{background: "lightcoral"}}>Occupied</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        ):null}
       </React.Fragment>
     );
   }
