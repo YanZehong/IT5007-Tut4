@@ -47,7 +47,7 @@ var IssueFilter = /*#__PURE__*/function (_React$Component) {
   _createClass(IssueFilter, [{
     key: "render",
     value: function render() {
-      return /*#__PURE__*/React.createElement("div", null, "This is a placeholder for the issue filter.");
+      return /*#__PURE__*/React.createElement("div", null, "Welcome");
     }
   }]);
 
@@ -56,19 +56,19 @@ var IssueFilter = /*#__PURE__*/function (_React$Component) {
 
 function IssueRow(props) {
   var issue = props.issue;
-  return /*#__PURE__*/React.createElement("tr", null, /*#__PURE__*/React.createElement("td", null, issue.id), /*#__PURE__*/React.createElement("td", null, issue.status), /*#__PURE__*/React.createElement("td", null, issue.owner), /*#__PURE__*/React.createElement("td", null, issue.created.toDateString()), /*#__PURE__*/React.createElement("td", null, issue.effort), /*#__PURE__*/React.createElement("td", null, issue.due ? issue.due.toDateString() : ''), /*#__PURE__*/React.createElement("td", null, issue.title));
+  return /*#__PURE__*/React.createElement("tr", null, /*#__PURE__*/React.createElement("td", null, issue.id), /*#__PURE__*/React.createElement("td", null, issue.name), /*#__PURE__*/React.createElement("td", null, issue.phone), /*#__PURE__*/React.createElement("td", null, issue.seatid), /*#__PURE__*/React.createElement("td", null, issue.created.toString().slice(0, 25)));
 }
 
-function IssueTable(props) {
+function DisplayTraveller(props) {
   var issueRows = props.issues.map(function (issue) {
     return /*#__PURE__*/React.createElement(IssueRow, {
-      key: issue.id,
+      key: issue.seatid,
       issue: issue
     });
   });
   return /*#__PURE__*/React.createElement("table", {
     className: "bordered-table"
-  }, /*#__PURE__*/React.createElement("thead", null, /*#__PURE__*/React.createElement("tr", null, /*#__PURE__*/React.createElement("th", null, "ID"), /*#__PURE__*/React.createElement("th", null, "Status"), /*#__PURE__*/React.createElement("th", null, "Owner"), /*#__PURE__*/React.createElement("th", null, "Created"), /*#__PURE__*/React.createElement("th", null, "Effort"), /*#__PURE__*/React.createElement("th", null, "Due Date"), /*#__PURE__*/React.createElement("th", null, "Title"))), /*#__PURE__*/React.createElement("tbody", null, issueRows));
+  }, /*#__PURE__*/React.createElement("thead", null, /*#__PURE__*/React.createElement("tr", null, /*#__PURE__*/React.createElement("th", null, "ID"), /*#__PURE__*/React.createElement("th", null, "Name"), /*#__PURE__*/React.createElement("th", null, "Phone Number"), /*#__PURE__*/React.createElement("th", null, "Seat No."), /*#__PURE__*/React.createElement("th", null, "Timestamp"))), /*#__PURE__*/React.createElement("tbody", null, issueRows));
 }
 
 var IssueAdd = /*#__PURE__*/function (_React$Component2) {
@@ -91,14 +91,22 @@ var IssueAdd = /*#__PURE__*/function (_React$Component2) {
     value: function handleSubmit(e) {
       e.preventDefault();
       var form = document.forms.issueAdd;
-      var issue = {
-        owner: form.owner.value,
-        title: form.title.value,
-        due: new Date(new Date().getTime() + 1000 * 60 * 60 * 24 * 10)
-      };
-      this.props.createIssue(issue);
-      form.owner.value = "";
-      form.title.value = "";
+      var seatNum = Number(form.seat.value);
+
+      if (seatNum >= 1 && seatNum <= 25) {
+        var issue = {
+          name: form.name.value,
+          phone: form.phone.value,
+          seatid: form.seat.value
+        };
+        this.props.createIssue(issue);
+      } else {
+        this.props.msgDisplay("Error: Invalid Seat Number");
+      }
+
+      form.name.value = "";
+      form.phone.value = "";
+      form.seat.value = "";
     }
   }, {
     key: "render",
@@ -108,12 +116,16 @@ var IssueAdd = /*#__PURE__*/function (_React$Component2) {
         onSubmit: this.handleSubmit
       }, /*#__PURE__*/React.createElement("input", {
         type: "text",
-        name: "owner",
-        placeholder: "Owner"
+        name: "name",
+        placeholder: "Name"
       }), /*#__PURE__*/React.createElement("input", {
         type: "text",
-        name: "title",
-        placeholder: "Title"
+        name: "phone",
+        placeholder: "Phone"
+      }), /*#__PURE__*/React.createElement("input", {
+        type: "text",
+        name: "seat",
+        placeholder: "Seat No."
       }), /*#__PURE__*/React.createElement("button", null, "Add"));
     }
   }]);
@@ -157,7 +169,7 @@ var BlackIssueAdd = /*#__PURE__*/function (_React$Component3) {
         type: "text",
         name: "name",
         placeholder: "Name"
-      }), /*#__PURE__*/React.createElement("button", null, "Add"));
+      }), /*#__PURE__*/React.createElement("button", null, "Block"));
     }
   }]);
 
@@ -252,6 +264,7 @@ var HomePage = /*#__PURE__*/function (_React$Component4) {
       showBlackIssueAdd: true
     };
     _this3.createIssue = _this3.createIssue.bind(_assertThisInitialized(_this3));
+    _this3.msgDisplay = _this3.msgDisplay.bind(_assertThisInitialized(_this3));
     _this3.createBlackIssue = _this3.createBlackIssue.bind(_assertThisInitialized(_this3));
     return _this3;
   }
@@ -270,7 +283,7 @@ var HomePage = /*#__PURE__*/function (_React$Component4) {
           while (1) {
             switch (_context.prev = _context.next) {
               case 0:
-                query = "query {\n      issueList {\n        id title status owner\n        created effort due\n      }\n    }";
+                query = "query {\n      issueList {\n        id name phone seatid created\n      }\n    }";
                 _context.next = 3;
                 return graphQLFetch(query);
 
@@ -317,6 +330,9 @@ var HomePage = /*#__PURE__*/function (_React$Component4) {
 
                 if (data) {
                   this.loadData();
+                  this.msgDisplay("Successful!");
+                } else {
+                  this.msgDisplay("Failed~");
                 }
 
               case 5:
@@ -366,6 +382,12 @@ var HomePage = /*#__PURE__*/function (_React$Component4) {
       return createBlackIssue;
     }()
   }, {
+    key: "msgDisplay",
+    value: function msgDisplay(msg) {
+      var msgDisp = document.getElementById("msgDisplay");
+      msgDisp.textContent = msg;
+    }
+  }, {
     key: "render",
     value: function render() {
       var _this4 = this;
@@ -377,33 +399,36 @@ var HomePage = /*#__PURE__*/function (_React$Component4) {
             showIssueFilter: !_this4.state.showIssueFilter
           });
         }
-      }, "IssueFilter"), ' | ', /*#__PURE__*/React.createElement("a", {
-        href: "#",
-        onClick: function onClick() {
-          _this4.setState({
-            showIssueTable: !_this4.state.showIssueTable
-          });
-        }
-      }, "IssueTable"), ' | ', /*#__PURE__*/React.createElement("a", {
+      }, "Home"), ' | ', /*#__PURE__*/React.createElement("a", {
         href: "#",
         onClick: function onClick() {
           _this4.setState({
             showIssueAdd: !_this4.state.showIssueAdd
           });
         }
-      }, "AddTraveller"), ' | ', /*#__PURE__*/React.createElement("a", {
+      }, "Add Traveller"), ' | ', /*#__PURE__*/React.createElement("a", {
         href: "#",
         onClick: function onClick() {
           _this4.setState({
             showBlackIssueAdd: !_this4.state.showBlackIssueAdd
           });
         }
-      }, "AddBlackList")), this.state.showIssueFilter ? /*#__PURE__*/React.createElement(IssueFilter, null) : null, /*#__PURE__*/React.createElement("hr", null), this.state.showIssueTable ? /*#__PURE__*/React.createElement(IssueTable, {
-        issues: this.state.issues
-      }) : null, /*#__PURE__*/React.createElement("hr", null), this.state.showIssueAdd ? /*#__PURE__*/React.createElement(IssueAdd, {
-        createIssue: this.createIssue
+      }, "Add BlackList"), ' | ', /*#__PURE__*/React.createElement("a", {
+        href: "#",
+        onClick: function onClick() {
+          _this4.setState({
+            showIssueTable: !_this4.state.showIssueTable
+          });
+        }
+      }, "Display Reservation")), this.state.showIssueFilter ? /*#__PURE__*/React.createElement(IssueFilter, null) : null, /*#__PURE__*/React.createElement("hr", null), this.state.showIssueAdd ? /*#__PURE__*/React.createElement(IssueAdd, {
+        createIssue: this.createIssue,
+        msgDisplay: this.msgDisplay
+      }) : null, this.state.showIssueAdd ? /*#__PURE__*/React.createElement("p", {
+        id: "msgDisplay"
       }) : null, /*#__PURE__*/React.createElement("hr", null), this.state.showBlackIssueAdd ? /*#__PURE__*/React.createElement(BlackIssueAdd, {
         createBlackIssue: this.createBlackIssue
+      }) : null, /*#__PURE__*/React.createElement("hr", null), this.state.showIssueTable ? /*#__PURE__*/React.createElement(DisplayTraveller, {
+        issues: this.state.issues
       }) : null, /*#__PURE__*/React.createElement("hr", null));
     }
   }]);

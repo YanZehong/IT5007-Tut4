@@ -13,14 +13,8 @@ db.issues.remove({});
 
 const issuesDB = [
   {
-    id: 1, status: 'New', owner: 'Ravan', effort: 5,
-    created: new Date('2019-01-15'), due: undefined,
-    title: 'Error in console when clicking Add',
-  },
-  {
-    id: 2, status: 'Assigned', owner: 'Eddie', effort: 14,
-    created: new Date('2019-01-16'), due: new Date('2019-02-01'),
-    title: 'Missing bottom border on panel',
+    id: 1, name: 'Ravan', phone: '80395111', seatid: 1,
+    created: new Date('2019-01-15'), 
   },
 ];
 
@@ -32,9 +26,9 @@ db.counters.remove({ _id: 'issues' });
 db.counters.insert({ _id: 'issues', current: count });
 
 db.issues.createIndex({ id: 1 }, { unique: true });
-db.issues.createIndex({ status: 1 });
-db.issues.createIndex({ owner: 1 });
-db.issues.createIndex({ created: 1 });
+db.issues.createIndex({ name: 1 });
+db.issues.createIndex({ phone: 1 });
+db.issues.createIndex({ seatid: 1 });
 
 
 db.blackissues.remove({});

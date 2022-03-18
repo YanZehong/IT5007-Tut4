@@ -68,11 +68,11 @@ async function getNextSequence(name) {
 
 function issueValidate(issue) {
   const errors = [];
-  if (issue.title.length < 3) {
-    errors.push('Field "title" must be at least 3 characters long.');
+  if (/\d/.test(issue.name)) {
+    errors.push('Field "name" contains number.');
   }
-  if (issue.status === 'Assigned' && !issue.owner) {
-    errors.push('Field "owner" is required when status is "Assigned"');
+  if (issue.name.length > 0 && !issue.phone) {
+    errors.push('Field "phone" is required when "name" is assigned');
   }
   if (errors.length > 0) {
     throw new UserInputError('Invalid input(s)', { errors });
@@ -80,6 +80,11 @@ function issueValidate(issue) {
 }
 
 async function blackissueAdd(_, { blackissue }) {
+    await db.collection('counters').findOneAndUpdate(
+      { _id: 'blackissues' },
+      { $inc: { current_bl: 1 } },
+      { returnOriginal: false },
+    );
     const blackresult = await db.collection('blackissues').insertOne(blackissue);
     const savedBlackIssue = await db.collection('blackissues')
         .findOne({ _id: blackresult.insertedId });
@@ -89,16 +94,16 @@ async function blackissueAdd(_, { blackissue }) {
 async function issueAdd(_, { issue }) {
   var savedIssue;
   issueValidate(issue);
-  issue.created = new Date();
-  issue.id = await getNextSequence('issues');
   /*
   * check blacklist
   */
-  const blacklistFind = await db.collection('blackissues').find({name: issue.owner}).count();
+  const blacklistFind = await db.collection('blackissues').find({name: issue.name}).count();
   if (blacklistFind > 0) {
     throw new Error('Invalid name in blacklist');
   }
   else {
+    issue.created = new Date();
+    issue.id = await getNextSequence('issues');
     const result = await db.collection('issues').insertOne(issue);
     savedIssue = await db.collection('issues')
         .findOne({ _id: result.insertedId });

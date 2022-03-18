@@ -8,7 +8,7 @@ function jsonDateReviver(key, value) {
 class IssueFilter extends React.Component {
   render() {
     return (
-      <div>This is a placeholder for the issue filter.</div>
+      <div>Welcome</div>
     );
   }
 }
@@ -18,19 +18,17 @@ function IssueRow(props) {
   return (
     <tr>
       <td>{issue.id}</td>
-      <td>{issue.status}</td>
-      <td>{issue.owner}</td>
-      <td>{issue.created.toDateString()}</td>
-      <td>{issue.effort}</td>
-      <td>{issue.due ? issue.due.toDateString() : ''}</td>
-      <td>{issue.title}</td>
+      <td>{issue.name}</td>
+      <td>{issue.phone}</td>
+      <td>{issue.seatid}</td>
+      <td>{issue.created.toString().slice(0, 25)}</td>
     </tr>
   );
 }
 
-function IssueTable(props) {
+function DisplayTraveller(props) {
   const issueRows = props.issues.map(issue =>
-    <IssueRow key={issue.id} issue={issue} />
+    <IssueRow key={issue.seatid} issue={issue} />
   );
 
   return (
@@ -38,12 +36,10 @@ function IssueTable(props) {
       <thead>
         <tr>
           <th>ID</th>
-          <th>Status</th>
-          <th>Owner</th>
-          <th>Created</th>
-          <th>Effort</th>
-          <th>Due Date</th>
-          <th>Title</th>
+          <th>Name</th>
+          <th>Phone Number</th>
+          <th>Seat No.</th>
+          <th>Timestamp</th>
         </tr>
       </thead>
       <tbody>
@@ -62,19 +58,25 @@ class IssueAdd extends React.Component {
   handleSubmit(e) {
     e.preventDefault();
     const form = document.forms.issueAdd;
-    const issue = {
-      owner: form.owner.value, title: form.title.value,
-      due: new Date(new Date().getTime() + 1000*60*60*24*10),
+    let seatNum = Number(form.seat.value);
+    if (seatNum >= 1 && seatNum <= 25) {
+      const issue = {
+        name: form.name.value, phone: form.phone.value, seatid: form.seat.value,
+      }
+      this.props.createIssue(issue);
     }
-    this.props.createIssue(issue);
-    form.owner.value = ""; form.title.value = "";
+    else {
+      this.props.msgDisplay("Error: Invalid Seat Number");
+    }
+    form.name.value = ""; form.phone.value = ""; form.seat.value = "";
   }
 
   render() {
     return (
       <form name="issueAdd" onSubmit={this.handleSubmit}>
-        <input type="text" name="owner" placeholder="Owner" />
-        <input type="text" name="title" placeholder="Title" />
+        <input type="text" name="name" placeholder="Name" />
+        <input type="text" name="phone" placeholder="Phone" />
+        <input type="text" name="seat" placeholder="Seat No." />
         <button>Add</button>
       </form>
     );
@@ -101,7 +103,7 @@ class BlackIssueAdd extends React.Component {
     return (
         <form name="blacklistAdd" onSubmit={this.handleSubmit}>
         <input type="text" name="name" placeholder="Name" />
-        <button>Add</button>
+        <button>Block</button>
         </form>
     );
   }
@@ -137,6 +139,7 @@ class HomePage extends React.Component {
     super();
     this.state = { issues: [], blackissues: [], showIssueFilter: false, showIssueTable: false, showIssueAdd: true, showBlackIssueAdd: true };
     this.createIssue = this.createIssue.bind(this);
+    this.msgDisplay = this.msgDisplay.bind(this);
     this.createBlackIssue = this.createBlackIssue.bind(this);
   }
 
@@ -147,8 +150,7 @@ class HomePage extends React.Component {
   async loadData() {
     const query = `query {
       issueList {
-        id title status owner
-        created effort due
+        id name phone seatid created
       }
     }`;
 
@@ -169,6 +171,10 @@ class HomePage extends React.Component {
     const data = await graphQLFetch(query, { issue });
     if (data) {
       this.loadData();
+      this.msgDisplay("Successful!");
+    }
+    else {
+      this.msgDisplay("Failed~");
     }
   }
 
@@ -182,26 +188,32 @@ class HomePage extends React.Component {
     const data = await graphQLFetch(query, { blackissue });
   }
 
+  msgDisplay(msg) {
+    const msgDisp = document.getElementById("msgDisplay");
+    msgDisp.textContent=msg;
+  }
+
   render() {
     return (
       <React.Fragment>
         <h1>Singapore Railway System</h1>
         <nav>
-          <a href="#" onClick={()=>{this.setState({showIssueFilter: !this.state.showIssueFilter})}}>IssueFilter</a>
+          <a href="#" onClick={()=>{this.setState({showIssueFilter: !this.state.showIssueFilter})}}>Home</a>
           {' | '}
-          <a href="#" onClick={()=>{this.setState({showIssueTable: !this.state.showIssueTable})}}>IssueTable</a>
+          <a href="#" onClick={()=>{this.setState({showIssueAdd: !this.state.showIssueAdd})}}>Add Traveller</a>
           {' | '}
-          <a href="#" onClick={()=>{this.setState({showIssueAdd: !this.state.showIssueAdd})}}>AddTraveller</a>
+          <a href="#" onClick={()=>{this.setState({showBlackIssueAdd: !this.state.showBlackIssueAdd})}}>Add BlackList</a>
           {' | '}
-          <a href="#" onClick={()=>{this.setState({showBlackIssueAdd: !this.state.showBlackIssueAdd})}}>AddBlackList</a>
+          <a href="#" onClick={()=>{this.setState({showIssueTable: !this.state.showIssueTable})}}>Display Reservation</a>
         </nav>
         {this.state.showIssueFilter? (<IssueFilter />): null}
         <hr />
-        {this.state.showIssueTable? (<IssueTable issues={this.state.issues} />):null}
-        <hr />
-        {this.state.showIssueAdd? (<IssueAdd createIssue={this.createIssue} />):null}
+        {this.state.showIssueAdd? (<IssueAdd createIssue={this.createIssue} msgDisplay = {this.msgDisplay}/> ):null}
+        {this.state.showIssueAdd? (<p id="msgDisplay"></p>):null}
         <hr />
         {this.state.showBlackIssueAdd? (<BlackIssueAdd createBlackIssue={this.createBlackIssue} />):null}
+        <hr />
+        {this.state.showIssueTable? (<DisplayTraveller issues={this.state.issues} />):null}
         <hr />
       </React.Fragment>
     );

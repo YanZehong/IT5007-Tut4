@@ -10,12 +10,10 @@ enum StatusType {
 type Issue {
   _id: ID!
   id: Int!
-  title: String!
-  status: StatusType!
-  owner: String
-  effort: Int
+  name: String
+  phone: String
+  seatid: Int!
   created: GraphQLDate!
-  due: GraphQLDate
 }
 
 type BlackIssue {
@@ -26,12 +24,9 @@ type BlackIssue {
 
 "Toned down Issue, used as inputs, without server generated values."
 input IssueInputs {
-  title: String!
-  "Optional, if not supplied, will be set to 'New'"
-  status: StatusType = New
-  owner: String
-  effort: Int
-  due: GraphQLDate
+  name: String
+  phone: String
+  seatid: Int!
 }
 
 input BlackIssueInputs {
