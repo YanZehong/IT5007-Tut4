@@ -232,27 +232,31 @@ function _graphQLFetch() {
   return _graphQLFetch.apply(this, arguments);
 }
 
-var IssueList = /*#__PURE__*/function (_React$Component4) {
-  _inherits(IssueList, _React$Component4);
+var HomePage = /*#__PURE__*/function (_React$Component4) {
+  _inherits(HomePage, _React$Component4);
 
-  var _super4 = _createSuper(IssueList);
+  var _super4 = _createSuper(HomePage);
 
-  function IssueList() {
+  function HomePage() {
     var _this3;
 
-    _classCallCheck(this, IssueList);
+    _classCallCheck(this, HomePage);
 
     _this3 = _super4.call(this);
     _this3.state = {
       issues: [],
-      blackissues: []
+      blackissues: [],
+      showIssueFilter: false,
+      showIssueTable: false,
+      showIssueAdd: true,
+      showBlackIssueAdd: true
     };
     _this3.createIssue = _this3.createIssue.bind(_assertThisInitialized(_this3));
     _this3.createBlackIssue = _this3.createBlackIssue.bind(_assertThisInitialized(_this3));
     return _this3;
   }
 
-  _createClass(IssueList, [{
+  _createClass(HomePage, [{
     key: "componentDidMount",
     value: function componentDidMount() {
       this.loadData();
@@ -364,18 +368,48 @@ var IssueList = /*#__PURE__*/function (_React$Component4) {
   }, {
     key: "render",
     value: function render() {
-      return /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("h1", null, "Issue Tracker"), /*#__PURE__*/React.createElement(IssueFilter, null), /*#__PURE__*/React.createElement("hr", null), /*#__PURE__*/React.createElement(IssueTable, {
+      var _this4 = this;
+
+      return /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("h1", null, "Singapore Railway System"), /*#__PURE__*/React.createElement("nav", null, /*#__PURE__*/React.createElement("a", {
+        href: "#",
+        onClick: function onClick() {
+          _this4.setState({
+            showIssueFilter: !_this4.state.showIssueFilter
+          });
+        }
+      }, "IssueFilter"), ' | ', /*#__PURE__*/React.createElement("a", {
+        href: "#",
+        onClick: function onClick() {
+          _this4.setState({
+            showIssueTable: !_this4.state.showIssueTable
+          });
+        }
+      }, "IssueTable"), ' | ', /*#__PURE__*/React.createElement("a", {
+        href: "#",
+        onClick: function onClick() {
+          _this4.setState({
+            showIssueAdd: !_this4.state.showIssueAdd
+          });
+        }
+      }, "AddTraveller"), ' | ', /*#__PURE__*/React.createElement("a", {
+        href: "#",
+        onClick: function onClick() {
+          _this4.setState({
+            showBlackIssueAdd: !_this4.state.showBlackIssueAdd
+          });
+        }
+      }, "AddBlackList")), this.state.showIssueFilter ? /*#__PURE__*/React.createElement(IssueFilter, null) : null, /*#__PURE__*/React.createElement("hr", null), this.state.showIssueTable ? /*#__PURE__*/React.createElement(IssueTable, {
         issues: this.state.issues
-      }), /*#__PURE__*/React.createElement("hr", null), /*#__PURE__*/React.createElement(IssueAdd, {
+      }) : null, /*#__PURE__*/React.createElement("hr", null), this.state.showIssueAdd ? /*#__PURE__*/React.createElement(IssueAdd, {
         createIssue: this.createIssue
-      }), /*#__PURE__*/React.createElement(BlackIssueAdd, {
+      }) : null, /*#__PURE__*/React.createElement("hr", null), this.state.showBlackIssueAdd ? /*#__PURE__*/React.createElement(BlackIssueAdd, {
         createBlackIssue: this.createBlackIssue
-      }));
+      }) : null, /*#__PURE__*/React.createElement("hr", null));
     }
   }]);
 
-  return IssueList;
+  return HomePage;
 }(React.Component);
 
-var element = /*#__PURE__*/React.createElement(IssueList, null);
+var element = /*#__PURE__*/React.createElement(HomePage, null);
 ReactDOM.render(element, document.getElementById('contents'));

@@ -132,10 +132,10 @@ async function graphQLFetch(query, variables = {}) {
   }
 }
 
-class IssueList extends React.Component {
+class HomePage extends React.Component {
   constructor() {
     super();
-    this.state = { issues: [], blackissues: [] };
+    this.state = { issues: [], blackissues: [], showIssueFilter: false, showIssueTable: false, showIssueAdd: true, showBlackIssueAdd: true };
     this.createIssue = this.createIssue.bind(this);
     this.createBlackIssue = this.createBlackIssue.bind(this);
   }
@@ -185,18 +185,29 @@ class IssueList extends React.Component {
   render() {
     return (
       <React.Fragment>
-        <h1>Issue Tracker</h1>
-        <IssueFilter />
+        <h1>Singapore Railway System</h1>
+        <nav>
+          <a href="#" onClick={()=>{this.setState({showIssueFilter: !this.state.showIssueFilter})}}>IssueFilter</a>
+          {' | '}
+          <a href="#" onClick={()=>{this.setState({showIssueTable: !this.state.showIssueTable})}}>IssueTable</a>
+          {' | '}
+          <a href="#" onClick={()=>{this.setState({showIssueAdd: !this.state.showIssueAdd})}}>AddTraveller</a>
+          {' | '}
+          <a href="#" onClick={()=>{this.setState({showBlackIssueAdd: !this.state.showBlackIssueAdd})}}>AddBlackList</a>
+        </nav>
+        {this.state.showIssueFilter? (<IssueFilter />): null}
         <hr />
-        <IssueTable issues={this.state.issues} />
+        {this.state.showIssueTable? (<IssueTable issues={this.state.issues} />):null}
         <hr />
-        <IssueAdd createIssue={this.createIssue} />
-        <BlackIssueAdd createBlackIssue={this.createBlackIssue} />
+        {this.state.showIssueAdd? (<IssueAdd createIssue={this.createIssue} />):null}
+        <hr />
+        {this.state.showBlackIssueAdd? (<BlackIssueAdd createBlackIssue={this.createBlackIssue} />):null}
+        <hr />
       </React.Fragment>
     );
   }
 }
 
-const element = <IssueList />;
+const element = <HomePage />;
 
 ReactDOM.render(element, document.getElementById('contents'));
