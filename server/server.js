@@ -44,6 +44,7 @@ const resolvers = {
     setAboutMessage,
     issueAdd,
     blackissueAdd,
+    issueDelete,
   },
   GraphQLDate,
 };
@@ -103,12 +104,31 @@ async function issueAdd(_, { issue }) {
   }
   else {
     issue.created = new Date();
-    issue.id = await getNextSequence('issues');
+    await getNextSequence('issues');
     const result = await db.collection('issues').insertOne(issue);
     savedIssue = await db.collection('issues')
         .findOne({ _id: result.insertedId });
   }
   return savedIssue;
+}
+
+async function issueDelete(_, { name }) {
+  var findID;
+  const issueFind = await db.collection('issues').findOne({name: name});
+  const issueCnt = await db.collection('issues').find({name: name}).count();
+  if (issueCnt > 0) {
+    await db.collection('issues').deleteOne({name: name});
+    const result = await db.collection('counters').findOneAndUpdate(
+      { _id: 'issues' },
+      { $inc: { current: -1 } },
+      { returnOriginal: false },
+    );
+    findID = issueFind.seatid;
+  }
+  else {
+    throw new Error('Name not found in Reservation List');
+  }
+  return findID;
 }
 
 async function connectToDb() {

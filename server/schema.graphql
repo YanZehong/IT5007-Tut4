@@ -9,7 +9,6 @@ enum StatusType {
 
 type Issue {
   _id: ID!
-  id: Int!
   name: String
   phone: String
   seatid: Int!
@@ -18,7 +17,6 @@ type Issue {
 
 type BlackIssue {
   _id: ID!
-  id: Int!
   name: String!
 }
 
@@ -43,4 +41,5 @@ type Mutation {
   setAboutMessage(message: String!): String
   issueAdd(issue: IssueInputs!): Issue!
   blackissueAdd(blackissue: BlackIssueInputs!): BlackIssue!
+  issueDelete(name: String!): Int
 }

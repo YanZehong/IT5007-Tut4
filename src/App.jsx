@@ -17,10 +17,9 @@ function IssueRow(props) {
   const issue = props.issue;
   return (
     <tr>
-      <td>{issue.id}</td>
+      <td>{issue.seatid}</td>
       <td>{issue.name}</td>
       <td>{issue.phone}</td>
-      <td>{issue.seatid}</td>
       <td>{issue.created.toString().slice(0, 25)}</td>
     </tr>
   );
@@ -35,10 +34,9 @@ function DisplayTraveller(props) {
     <table className="bordered-table">
       <thead>
         <tr>
-          <th>ID</th>
+          <th>Seat No.</th>
           <th>Name</th>
           <th>Phone Number</th>
-          <th>Seat No.</th>
           <th>Timestamp</th>
         </tr>
       </thead>
@@ -78,6 +76,30 @@ class IssueAdd extends React.Component {
         <input type="text" name="phone" placeholder="Phone" />
         <input type="text" name="seat" placeholder="Seat No." />
         <button>Add</button>
+      </form>
+    );
+  }
+}
+
+class IssueDelete extends React.Component {
+  constructor() {
+    super();
+    this.handleSubmit = this.handleSubmit.bind(this);
+  }
+
+  handleSubmit(e) {
+    e.preventDefault();
+    const form = document.forms.issueDelete;
+    const name = form.name.value;
+    this.props.deleteIssue(name);
+    form.name.value = ""; 
+  }
+
+  render() {
+    return (
+      <form name="issueDelete" onSubmit={this.handleSubmit}>
+        <input type="text" name="name" placeholder="Name" />
+        <button>Delete</button>
       </form>
     );
   }
@@ -174,10 +196,12 @@ async function graphQLFetch(query, variables = {}) {
 class HomePage extends React.Component {
   constructor() {
     super();
-    this.state = { issues: [], blackissues: [], showIssueFilter: false, showIssueTable: false, showIssueAdd: true, showBlackIssueAdd: true, showSeats: false, seatDict: {} };
+    this.state = { issues: [], blackissues: [], showIssueFilter: false, showIssueTable: false, showIssueAdd: true, showBlackIssueAdd: true, showIssueDelete: false, showSeats: false, seatDict: {} };
     this.createIssue = this.createIssue.bind(this);
+    this.deleteIssue = this.deleteIssue.bind(this);
     this.msgDisplay = this.msgDisplay.bind(this);
     this.msgBlackList = this.msgBlackList.bind(this);
+    this.msgDisplayDel = this.msgDisplayDel.bind(this);
     this.createBlackIssue = this.createBlackIssue.bind(this);
   }
 
@@ -189,7 +213,7 @@ class HomePage extends React.Component {
   async loadData() {
     const query = `query {
       issueList {
-        id name phone seatid created
+        name phone seatid created
       }
     }`;
 
@@ -213,7 +237,7 @@ class HomePage extends React.Component {
     if (updateSeatDict[seatNum]=="Available") {
       const query = `mutation issueAdd($issue: IssueInputs!) {
         issueAdd(issue: $issue) {
-          id
+          seatid
         }
       }`;
 
@@ -230,6 +254,25 @@ class HomePage extends React.Component {
     }
     else {
       this.msgDisplay("Occupied Seat~");
+    }
+  }
+
+  async deleteIssue(name) {
+    const updateSeatDictDel = this.state.seatDict;
+    const query = `mutation issueDelete($name: String!) {
+      issueDelete(name: $name)
+    }`;
+    const data = await graphQLFetch(query, { name });
+    if (data) {
+      this.loadData();
+      // console.log(data);
+      let seatNum = Number(data.issueDelete);
+      updateSeatDictDel[seatNum] = "Available";
+      this.setState({ seatDict: updateSeatDictDel });
+      this.msgDisplayDel("Successful Cancel");
+    }
+    else {
+      this.msgDisplayDel("Not found! No need to delete");
     }
   }
 
@@ -257,6 +300,11 @@ class HomePage extends React.Component {
     msgDisp.textContent=msg;
   }
 
+  msgDisplayDel(msg) {
+    const msgDispDel = document.getElementById("msgDisplayDel");
+    msgDispDel.textContent=msg;
+  }
+
   render() {
     return (
       <React.Fragment>
@@ -267,6 +315,8 @@ class HomePage extends React.Component {
           <a href="#" onClick={()=>{this.setState({showIssueAdd: !this.state.showIssueAdd})}}>Add Traveller</a>
           {' | '}
           <a href="#" onClick={()=>{this.setState({showBlackIssueAdd: !this.state.showBlackIssueAdd})}}>Add BlackList</a>
+          {' | '}
+          <a href="#" onClick={()=>{this.setState({showIssueDelete: !this.state.showIssueDelete})}}>Delete Traveller</a>
           {' | '}
           <a href="#" onClick={()=>{this.setState({showIssueTable: !this.state.showIssueTable})}}>Display Reservation</a>
           {' | '}
@@ -279,6 +329,9 @@ class HomePage extends React.Component {
         <hr />
         {this.state.showBlackIssueAdd? (<BlackIssueAdd createBlackIssue={this.createBlackIssue} />):null}
         {this.state.showBlackIssueAdd? (<p id="msgBlackList"></p>):null}
+        <hr />
+        {this.state.showIssueDelete? (<IssueDelete deleteIssue={this.deleteIssue} msgDisplayDel = {this.msgDisplayDel}/> ):null}
+        {this.state.showIssueDelete? (<p id="msgDisplayDel"></p>):null}
         <hr />
         {this.state.showIssueTable? (<DisplayTraveller issues={this.state.issues} />):null}
         <hr />

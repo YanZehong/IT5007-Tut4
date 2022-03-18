@@ -25,10 +25,9 @@ print('Inserted', count, 'issues');
 db.counters.remove({ _id: 'issues' });
 db.counters.insert({ _id: 'issues', current: count });
 
-db.issues.createIndex({ id: 1 }, { unique: true });
 db.issues.createIndex({ name: 1 });
 db.issues.createIndex({ phone: 1 });
-db.issues.createIndex({ seatid: 1 });
+db.issues.createIndex({ seatid: 1 }, { unique: true });
 
 
 db.blackissues.remove({});

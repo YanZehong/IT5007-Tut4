@@ -56,7 +56,7 @@ var IssueFilter = /*#__PURE__*/function (_React$Component) {
 
 function IssueRow(props) {
   var issue = props.issue;
-  return /*#__PURE__*/React.createElement("tr", null, /*#__PURE__*/React.createElement("td", null, issue.id), /*#__PURE__*/React.createElement("td", null, issue.name), /*#__PURE__*/React.createElement("td", null, issue.phone), /*#__PURE__*/React.createElement("td", null, issue.seatid), /*#__PURE__*/React.createElement("td", null, issue.created.toString().slice(0, 25)));
+  return /*#__PURE__*/React.createElement("tr", null, /*#__PURE__*/React.createElement("td", null, issue.seatid), /*#__PURE__*/React.createElement("td", null, issue.name), /*#__PURE__*/React.createElement("td", null, issue.phone), /*#__PURE__*/React.createElement("td", null, issue.created.toString().slice(0, 25)));
 }
 
 function DisplayTraveller(props) {
@@ -68,7 +68,7 @@ function DisplayTraveller(props) {
   });
   return /*#__PURE__*/React.createElement("table", {
     className: "bordered-table"
-  }, /*#__PURE__*/React.createElement("thead", null, /*#__PURE__*/React.createElement("tr", null, /*#__PURE__*/React.createElement("th", null, "ID"), /*#__PURE__*/React.createElement("th", null, "Name"), /*#__PURE__*/React.createElement("th", null, "Phone Number"), /*#__PURE__*/React.createElement("th", null, "Seat No."), /*#__PURE__*/React.createElement("th", null, "Timestamp"))), /*#__PURE__*/React.createElement("tbody", null, issueRows));
+  }, /*#__PURE__*/React.createElement("thead", null, /*#__PURE__*/React.createElement("tr", null, /*#__PURE__*/React.createElement("th", null, "Seat No."), /*#__PURE__*/React.createElement("th", null, "Name"), /*#__PURE__*/React.createElement("th", null, "Phone Number"), /*#__PURE__*/React.createElement("th", null, "Timestamp"))), /*#__PURE__*/React.createElement("tbody", null, issueRows));
 }
 
 var IssueAdd = /*#__PURE__*/function (_React$Component2) {
@@ -133,19 +133,60 @@ var IssueAdd = /*#__PURE__*/function (_React$Component2) {
   return IssueAdd;
 }(React.Component);
 
-var BlackIssueAdd = /*#__PURE__*/function (_React$Component3) {
-  _inherits(BlackIssueAdd, _React$Component3);
+var IssueDelete = /*#__PURE__*/function (_React$Component3) {
+  _inherits(IssueDelete, _React$Component3);
 
-  var _super3 = _createSuper(BlackIssueAdd);
+  var _super3 = _createSuper(IssueDelete);
 
-  function BlackIssueAdd() {
+  function IssueDelete() {
     var _this2;
 
-    _classCallCheck(this, BlackIssueAdd);
+    _classCallCheck(this, IssueDelete);
 
     _this2 = _super3.call(this);
     _this2.handleSubmit = _this2.handleSubmit.bind(_assertThisInitialized(_this2));
     return _this2;
+  }
+
+  _createClass(IssueDelete, [{
+    key: "handleSubmit",
+    value: function handleSubmit(e) {
+      e.preventDefault();
+      var form = document.forms.issueDelete;
+      var name = form.name.value;
+      this.props.deleteIssue(name);
+      form.name.value = "";
+    }
+  }, {
+    key: "render",
+    value: function render() {
+      return /*#__PURE__*/React.createElement("form", {
+        name: "issueDelete",
+        onSubmit: this.handleSubmit
+      }, /*#__PURE__*/React.createElement("input", {
+        type: "text",
+        name: "name",
+        placeholder: "Name"
+      }), /*#__PURE__*/React.createElement("button", null, "Delete"));
+    }
+  }]);
+
+  return IssueDelete;
+}(React.Component);
+
+var BlackIssueAdd = /*#__PURE__*/function (_React$Component4) {
+  _inherits(BlackIssueAdd, _React$Component4);
+
+  var _super4 = _createSuper(BlackIssueAdd);
+
+  function BlackIssueAdd() {
+    var _this3;
+
+    _classCallCheck(this, BlackIssueAdd);
+
+    _this3 = _super4.call(this);
+    _this3.handleSubmit = _this3.handleSubmit.bind(_assertThisInitialized(_this3));
+    return _this3;
   }
 
   _createClass(BlackIssueAdd, [{
@@ -176,15 +217,15 @@ var BlackIssueAdd = /*#__PURE__*/function (_React$Component3) {
   return BlackIssueAdd;
 }(React.Component);
 
-var DisplaySeat = /*#__PURE__*/function (_React$Component4) {
-  _inherits(DisplaySeat, _React$Component4);
+var DisplaySeat = /*#__PURE__*/function (_React$Component5) {
+  _inherits(DisplaySeat, _React$Component5);
 
-  var _super4 = _createSuper(DisplaySeat);
+  var _super5 = _createSuper(DisplaySeat);
 
   function DisplaySeat() {
     _classCallCheck(this, DisplaySeat);
 
-    return _super4.apply(this, arguments);
+    return _super5.apply(this, arguments);
   }
 
   _createClass(DisplaySeat, [{
@@ -257,21 +298,21 @@ function graphQLFetch(_x) {
 }
 
 function _graphQLFetch() {
-  _graphQLFetch = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee4(query) {
+  _graphQLFetch = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee5(query) {
     var variables,
         response,
         body,
         result,
         error,
         details,
-        _args4 = arguments;
-    return regeneratorRuntime.wrap(function _callee4$(_context4) {
+        _args5 = arguments;
+    return regeneratorRuntime.wrap(function _callee5$(_context5) {
       while (1) {
-        switch (_context4.prev = _context4.next) {
+        switch (_context5.prev = _context5.next) {
           case 0:
-            variables = _args4.length > 1 && _args4[1] !== undefined ? _args4[1] : {};
-            _context4.prev = 1;
-            _context4.next = 4;
+            variables = _args5.length > 1 && _args5[1] !== undefined ? _args5[1] : {};
+            _context5.prev = 1;
+            _context5.next = 4;
             return fetch('/graphql', {
               method: 'POST',
               headers: {
@@ -284,12 +325,12 @@ function _graphQLFetch() {
             });
 
           case 4:
-            response = _context4.sent;
-            _context4.next = 7;
+            response = _context5.sent;
+            _context5.next = 7;
             return response.text();
 
           case 7:
-            body = _context4.sent;
+            body = _context5.sent;
             result = JSON.parse(body, jsonDateReviver);
 
             if (result.errors) {
@@ -303,49 +344,52 @@ function _graphQLFetch() {
               }
             }
 
-            return _context4.abrupt("return", result.data);
+            return _context5.abrupt("return", result.data);
 
           case 13:
-            _context4.prev = 13;
-            _context4.t0 = _context4["catch"](1);
-            alert("Error in sending data to server: ".concat(_context4.t0.message));
+            _context5.prev = 13;
+            _context5.t0 = _context5["catch"](1);
+            alert("Error in sending data to server: ".concat(_context5.t0.message));
 
           case 16:
           case "end":
-            return _context4.stop();
+            return _context5.stop();
         }
       }
-    }, _callee4, null, [[1, 13]]);
+    }, _callee5, null, [[1, 13]]);
   }));
   return _graphQLFetch.apply(this, arguments);
 }
 
-var HomePage = /*#__PURE__*/function (_React$Component5) {
-  _inherits(HomePage, _React$Component5);
+var HomePage = /*#__PURE__*/function (_React$Component6) {
+  _inherits(HomePage, _React$Component6);
 
-  var _super5 = _createSuper(HomePage);
+  var _super6 = _createSuper(HomePage);
 
   function HomePage() {
-    var _this3;
+    var _this4;
 
     _classCallCheck(this, HomePage);
 
-    _this3 = _super5.call(this);
-    _this3.state = {
+    _this4 = _super6.call(this);
+    _this4.state = {
       issues: [],
       blackissues: [],
       showIssueFilter: false,
       showIssueTable: false,
       showIssueAdd: true,
       showBlackIssueAdd: true,
+      showIssueDelete: false,
       showSeats: false,
       seatDict: {}
     };
-    _this3.createIssue = _this3.createIssue.bind(_assertThisInitialized(_this3));
-    _this3.msgDisplay = _this3.msgDisplay.bind(_assertThisInitialized(_this3));
-    _this3.msgBlackList = _this3.msgBlackList.bind(_assertThisInitialized(_this3));
-    _this3.createBlackIssue = _this3.createBlackIssue.bind(_assertThisInitialized(_this3));
-    return _this3;
+    _this4.createIssue = _this4.createIssue.bind(_assertThisInitialized(_this4));
+    _this4.deleteIssue = _this4.deleteIssue.bind(_assertThisInitialized(_this4));
+    _this4.msgDisplay = _this4.msgDisplay.bind(_assertThisInitialized(_this4));
+    _this4.msgBlackList = _this4.msgBlackList.bind(_assertThisInitialized(_this4));
+    _this4.msgDisplayDel = _this4.msgDisplayDel.bind(_assertThisInitialized(_this4));
+    _this4.createBlackIssue = _this4.createBlackIssue.bind(_assertThisInitialized(_this4));
+    return _this4;
   }
 
   _createClass(HomePage, [{
@@ -363,7 +407,7 @@ var HomePage = /*#__PURE__*/function (_React$Component5) {
           while (1) {
             switch (_context.prev = _context.next) {
               case 0:
-                query = "query {\n      issueList {\n        id name phone seatid created\n      }\n    }";
+                query = "query {\n      issueList {\n        name phone seatid created\n      }\n    }";
                 _context.next = 3;
                 return graphQLFetch(query);
 
@@ -420,7 +464,7 @@ var HomePage = /*#__PURE__*/function (_React$Component5) {
                   break;
                 }
 
-                query = "mutation issueAdd($issue: IssueInputs!) {\n        issueAdd(issue: $issue) {\n          id\n        }\n      }";
+                query = "mutation issueAdd($issue: IssueInputs!) {\n        issueAdd(issue: $issue) {\n          seatid\n        }\n      }";
                 _context2.next = 6;
                 return graphQLFetch(query, {
                   issue: issue
@@ -461,22 +505,68 @@ var HomePage = /*#__PURE__*/function (_React$Component5) {
       return createIssue;
     }()
   }, {
-    key: "createBlackIssue",
+    key: "deleteIssue",
     value: function () {
-      var _createBlackIssue = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee3(blackissue) {
-        var query, data;
+      var _deleteIssue = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee3(name) {
+        var updateSeatDictDel, query, data, seatNum;
         return regeneratorRuntime.wrap(function _callee3$(_context3) {
           while (1) {
             switch (_context3.prev = _context3.next) {
               case 0:
+                updateSeatDictDel = this.state.seatDict;
+                query = "mutation issueDelete($name: String!) {\n      issueDelete(name: $name)\n    }";
+                _context3.next = 4;
+                return graphQLFetch(query, {
+                  name: name
+                });
+
+              case 4:
+                data = _context3.sent;
+
+                if (data) {
+                  this.loadData(); // console.log(data);
+
+                  seatNum = Number(data.issueDelete);
+                  updateSeatDictDel[seatNum] = "Available";
+                  this.setState({
+                    seatDict: updateSeatDictDel
+                  });
+                  this.msgDisplayDel("Successful Cancel");
+                } else {
+                  this.msgDisplayDel("Not found! No need to delete");
+                }
+
+              case 6:
+              case "end":
+                return _context3.stop();
+            }
+          }
+        }, _callee3, this);
+      }));
+
+      function deleteIssue(_x3) {
+        return _deleteIssue.apply(this, arguments);
+      }
+
+      return deleteIssue;
+    }()
+  }, {
+    key: "createBlackIssue",
+    value: function () {
+      var _createBlackIssue = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee4(blackissue) {
+        var query, data;
+        return regeneratorRuntime.wrap(function _callee4$(_context4) {
+          while (1) {
+            switch (_context4.prev = _context4.next) {
+              case 0:
                 query = "mutation blackissueAdd($blackissue: BlackIssueInputs!) {\n      blackissueAdd(blackissue: $blackissue) {\n          name\n      }\n    }";
-                _context3.next = 3;
+                _context4.next = 3;
                 return graphQLFetch(query, {
                   blackissue: blackissue
                 });
 
               case 3:
-                data = _context3.sent;
+                data = _context4.sent;
 
                 if (data) {
                   this.loadData();
@@ -485,13 +575,13 @@ var HomePage = /*#__PURE__*/function (_React$Component5) {
 
               case 5:
               case "end":
-                return _context3.stop();
+                return _context4.stop();
             }
           }
-        }, _callee3, this);
+        }, _callee4, this);
       }));
 
-      function createBlackIssue(_x3) {
+      function createBlackIssue(_x4) {
         return _createBlackIssue.apply(this, arguments);
       }
 
@@ -510,43 +600,56 @@ var HomePage = /*#__PURE__*/function (_React$Component5) {
       msgDisp.textContent = msg;
     }
   }, {
+    key: "msgDisplayDel",
+    value: function msgDisplayDel(msg) {
+      var msgDispDel = document.getElementById("msgDisplayDel");
+      msgDispDel.textContent = msg;
+    }
+  }, {
     key: "render",
     value: function render() {
-      var _this4 = this;
+      var _this5 = this;
 
       return /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("h1", null, "Singapore Railway System"), /*#__PURE__*/React.createElement("nav", null, /*#__PURE__*/React.createElement("a", {
         href: "#",
         onClick: function onClick() {
-          _this4.setState({
-            showIssueFilter: !_this4.state.showIssueFilter
+          _this5.setState({
+            showIssueFilter: !_this5.state.showIssueFilter
           });
         }
       }, "Home"), ' | ', /*#__PURE__*/React.createElement("a", {
         href: "#",
         onClick: function onClick() {
-          _this4.setState({
-            showIssueAdd: !_this4.state.showIssueAdd
+          _this5.setState({
+            showIssueAdd: !_this5.state.showIssueAdd
           });
         }
       }, "Add Traveller"), ' | ', /*#__PURE__*/React.createElement("a", {
         href: "#",
         onClick: function onClick() {
-          _this4.setState({
-            showBlackIssueAdd: !_this4.state.showBlackIssueAdd
+          _this5.setState({
+            showBlackIssueAdd: !_this5.state.showBlackIssueAdd
           });
         }
       }, "Add BlackList"), ' | ', /*#__PURE__*/React.createElement("a", {
         href: "#",
         onClick: function onClick() {
-          _this4.setState({
-            showIssueTable: !_this4.state.showIssueTable
+          _this5.setState({
+            showIssueDelete: !_this5.state.showIssueDelete
+          });
+        }
+      }, "Delete Traveller"), ' | ', /*#__PURE__*/React.createElement("a", {
+        href: "#",
+        onClick: function onClick() {
+          _this5.setState({
+            showIssueTable: !_this5.state.showIssueTable
           });
         }
       }, "Display Reservation"), ' | ', /*#__PURE__*/React.createElement("a", {
         href: "#",
         onClick: function onClick() {
-          _this4.setState({
-            showSeats: !_this4.state.showSeats
+          _this5.setState({
+            showSeats: !_this5.state.showSeats
           });
         }
       }, "Display Seats")), this.state.showIssueFilter ? /*#__PURE__*/React.createElement(IssueFilter, null) : null, /*#__PURE__*/React.createElement("hr", null), this.state.showIssueAdd ? /*#__PURE__*/React.createElement(IssueAdd, {
@@ -558,6 +661,11 @@ var HomePage = /*#__PURE__*/function (_React$Component5) {
         createBlackIssue: this.createBlackIssue
       }) : null, this.state.showBlackIssueAdd ? /*#__PURE__*/React.createElement("p", {
         id: "msgBlackList"
+      }) : null, /*#__PURE__*/React.createElement("hr", null), this.state.showIssueDelete ? /*#__PURE__*/React.createElement(IssueDelete, {
+        deleteIssue: this.deleteIssue,
+        msgDisplayDel: this.msgDisplayDel
+      }) : null, this.state.showIssueDelete ? /*#__PURE__*/React.createElement("p", {
+        id: "msgDisplayDel"
       }) : null, /*#__PURE__*/React.createElement("hr", null), this.state.showIssueTable ? /*#__PURE__*/React.createElement(DisplayTraveller, {
         issues: this.state.issues
       }) : null, /*#__PURE__*/React.createElement("hr", null), this.state.showSeats ? /*#__PURE__*/React.createElement(DisplaySeat, {
