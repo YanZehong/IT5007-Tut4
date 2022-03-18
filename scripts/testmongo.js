@@ -22,9 +22,9 @@ function testWithCallbacks(callback) {
     const traveller_collection = db.collection('issues');
     traveller_collection.deleteMany({});
 
-    const traveller = { id: 1, name: 'A. Callback1', phone: '80391111', seatid: 1 };
-    const travellers = [{ id: 2, name: 'A. Callback2', phone: '80392222', seatid: 2 },
-                        { id: 3, name: 'A. Callback3', phone: '80393333', seatid: 3 },];
+    const traveller = { name: 'A. Callback1', phone: '80391111', seatid: 1 };
+    const travellers = [{ name: 'A. Callback2', phone: '80392222', seatid: 2 },
+                        { name: 'A. Callback3', phone: '80393333', seatid: 3 },];
     // test create one
     traveller_collection.insertOne(traveller, function(err, result) {
       if (err) {
@@ -104,7 +104,7 @@ async function testWithAsync() {
     const traveller_collection = db.collection('issues');
     traveller_collection.deleteMany({});
 
-    const traveller = { id: 4, name: 'B. Async', phone: '80004444', seatid: 4 };
+    const traveller = { name: 'B. Async', phone: '80004444', seatid: 4 };
     // test add
     const result = await traveller_collection.insertOne(traveller);
     console.log('Result of insert:\n', result.insertedId);
