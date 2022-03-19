@@ -10,7 +10,7 @@ const url = 'mongodb://localhost/issuetracker';
 
 function testWithCallbacks(callback) {
   console.log('\n--- testWithCallbacks ---');
-  const client = new MongoClient(url, { useUnifiedTopology: true });
+  const client = new MongoClient(url, { useNewUrlParser: true });
   client.connect(function(err, client) {
     if (err) {
       callback(err);
@@ -96,7 +96,7 @@ function testWithCallbacks(callback) {
 
 async function testWithAsync() {
   console.log('\n--- testWithAsync ---');
-  const client = new MongoClient(url, { useUnifiedTopology: true });
+  const client = new MongoClient(url, { useNewUrlParser: true });
   try {
     await client.connect();
     console.log('Connected to MongoDB');
