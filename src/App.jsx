@@ -263,10 +263,11 @@ class HomePage extends React.Component {
       issueDelete(name: $name)
     }`;
     const data = await graphQLFetch(query, { name });
-    if (data) {
+    if (data.issueDelete) {
       this.loadData();
       // console.log(data);
       let seatNum = Number(data.issueDelete);
+      // console.log(seatNum);
       updateSeatDictDel[seatNum] = "Available";
       this.setState({ seatDict: updateSeatDictDel });
       this.msgDisplayDel("Successful Cancel");

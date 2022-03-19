@@ -523,10 +523,11 @@ var HomePage = /*#__PURE__*/function (_React$Component6) {
               case 4:
                 data = _context3.sent;
 
-                if (data) {
+                if (data.issueDelete) {
                   this.loadData(); // console.log(data);
 
-                  seatNum = Number(data.issueDelete);
+                  seatNum = Number(data.issueDelete); // console.log(seatNum);
+
                   updateSeatDictDel[seatNum] = "Available";
                   this.setState({
                     seatDict: updateSeatDictDel

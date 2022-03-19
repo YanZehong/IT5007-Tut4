@@ -75,6 +75,9 @@ function issueValidate(issue) {
   if (issue.name.length > 0 && !issue.phone) {
     errors.push('Field "phone" is required when "name" is assigned');
   }
+  if (/[a-zA-Z]/i.test(issue.phone)) {
+    errors.push('Field "phone" cannot contain alphabetical characters');
+  }
   if (errors.length > 0) {
     throw new UserInputError('Invalid input(s)', { errors });
   }
