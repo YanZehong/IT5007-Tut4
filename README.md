@@ -1,5 +1,5 @@
 # IT5007-Tut4 Singapore Railway System
-github: https://github.com/YanZehong/IT5007-YZH.git
+https://github.com/YanZehong/IT5007-Tut4.git
 
 ## Commands
 ### mongoDB test (CRUD)
