@@ -62,7 +62,11 @@ Child Components:
 ## Corner Cases
 - underflow and overflow (<0 or >25)- 'Error: Invalid Seat Number';  
 - occupied slots- 'Occupied Seat~';  
-- failed reserve- 'Failed~' for 'Invalid input(s)': (1) 'Field "name" contains number'; (2) 'Field "phone" is required when "name" is assigned'; (3) 'Field "phone" cannot contain alphabetical characters'; (4) 'INTERNAL_SERVER_ERROR: Invalid name in blacklist'.  
+- failed reserve- 'Failed~' for 'Invalid input(s)':   
+(1) 'Field "name" contains number';  
+(2) 'Field "phone" is required when "name" is assigned';  
+(3) 'Field "phone" cannot contain alphabetical characters';  
+(4) 'INTERNAL_SERVER_ERROR: Invalid name in blacklist'.  
 
 ## Demonstration
 <image src="/images/overview.png"/>
