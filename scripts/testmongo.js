@@ -33,8 +33,9 @@ function testWithCallbacks(callback) {
         return;
       }
       console.log('Result of insert:\n', result.insertedId);
+      const temp_id = result.insertedId;
       // test read
-      traveller_collection.find({ _id: result.insertedId})
+      traveller_collection.find({ _id: temp_id})
         .toArray(function(err, docs) {
         if (err) {
           client.close();
@@ -44,14 +45,14 @@ function testWithCallbacks(callback) {
         console.log('Result of find:\n', docs);
       });
       // test update
-      traveller_collection.updateOne({ _id: result.insertedId}, { $set: {name: "A. Callback Update"} }, function(err, upres) {
+      traveller_collection.updateOne({ _id: temp_id}, { $set: {name: "A. Callback Update"} }, function(err, upres) {
         if (err) {
           client.close();
           callback(err);
           return;
         }
       });
-      traveller_collection.find({ _id: result.insertedId})
+      traveller_collection.find({ _id: temp_id})
           .toArray(function(err, updocs) {
           if (err) {
             client.close();
@@ -61,8 +62,8 @@ function testWithCallbacks(callback) {
           console.log('Result of update:\n', updocs);
         });
       // test delete
-      traveller_collection.deleteOne({ _id: result.insertedId});
-      traveller_collection.find({ _id: result.insertedId})
+      traveller_collection.deleteOne({ _id: temp_id});
+      traveller_collection.find({ _id: temp_id})
         .toArray(function(err, after_docs) {
         if (err) {
           client.close();
@@ -108,13 +109,14 @@ async function testWithAsync() {
     // test add
     const result = await traveller_collection.insertOne(traveller);
     console.log('Result of insert:\n', result.insertedId);
+    const temp_result_id = result.insertedId;
     // test read
-    const docs = await traveller_collection.find({ _id: result.insertedId })
+    const docs = await traveller_collection.find({ _id: temp_result_id })
       .toArray();
     console.log('Result of find:\n', docs);
     // test delete
-    const delete_result = await traveller_collection.deleteOne({ _id: result.insertedId });
-    const after_docs = await traveller_collection.find({ _id: result.insertedId })
+    const delete_result = await traveller_collection.deleteOne({ _id: temp_result_id });
+    const after_docs = await traveller_collection.find({ _id: temp_result_id })
       .toArray();
     console.log('Result of delete:\n', after_docs);
   } catch(err) {
